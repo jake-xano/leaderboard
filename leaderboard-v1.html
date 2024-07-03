@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scores Display</title>
+    <style>
+        
+        body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #333;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+    </style>
+</head>
+<body>
+    <h1>Scores</h1>
+    <ul id="scoresList"></ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        fetchScores();
+    });
+    
+    function fetchScores() {
+        fetch('https://xvrs-fsxb-w8c7.n7c.xano.io/api:EVuVOmW4/html/leaderboard')
+            .then(response => response.json())
+            .then(data => {
+                displayScores(data);
+            })
+            .catch(error => {
+                console.error('Error fetching scores:', error);
+            });
+    }
+    
+    function displayScores(scores) {
+        const scoresList = document.getElementById('scoresList');
+        scoresList.innerHTML = '';  // Clear existing scores
+    
+        scores.forEach(score => {
+            const li = document.createElement('li');
+            li.textContent = `Player: ${score.name} - Score: ${score.score}`;
+            scoresList.appendChild(li);
+        });
+    }
+     </script>
+</body>
+</html>
