@@ -31,7 +31,7 @@
     imgDiv.appendChild(img);
   
     const nameSpan = document.createElement('span');
-    nameSpan.className = "text-md truncate flex-1";
+    nameSpan.className = "text-md truncate flex-1 leaderboard-name";
     nameSpan.dataset.blockId = `name_${entry.rank}`;
     nameSpan.dataset.blockName = "text";
     nameSpan.textContent = entry.name;
