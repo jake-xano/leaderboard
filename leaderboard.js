@@ -2,22 +2,23 @@
   
   function createLeaderboardEntry(entry) {
     const a = document.createElement('a');
-    a.className = "cursor-pointer rounded-base transition duration-200 focus:outline-none focus-visible:ring text-content-subdued hover:text-link-hovered hover:bg-surface-hovered";
+    // a.className = "cursor-pointer rounded-base transition duration-200 focus:outline-none focus-visible:ring text-content-subdued hover:text-link-hovered hover:bg-surface-hovered";
+    a.className = "group flex space-s-3 items-center p-2 rounded-base hover:bg-surface-hovered";
     a.href = `/member/${entry.member_id}`;
     a.dataset.blockId = `link_${entry.rank}`;
     a.dataset.blockName = "link";
   
-    const div = document.createElement('div');
-    div.className = "w-full flex flex-row max-w-full sm:max-w-xs self-center space-s-3 sm:space-s-3.5 md:space-s-4 lg:space-s-5 py-2 sm:py-2.5 lg:py-3 px-2 sm:px-2.5 lg:px-3";
+    const divWrapper = document.createElement('div');
+    divWrapper.className = "w-full flex flex-row max-w-full sm:max-w-xs self-center space-s-3 sm:space-s-3.5 md:space-s-4 lg:space-s-5 py-2 sm:py-2.5 lg:py-3 px-2 sm:px-2.5 lg:px-3";
   
-    const rankSpan = document.createElement('span');
-    rankSpan.className = "text-center text-lg w-5 flex-shrink-0 font-medium whitespace-nowrap";
-    rankSpan.dataset.blockId = `rank_${entry.rank}`;
-    rankSpan.dataset.blockName = "text";
-    rankSpan.textContent = entry.rank;
+    const rankDiv = document.createElement('div');
+    rankDiv.className = "text-lg font-medium w-5 text-center flex-shrink-0 whitespace-nowrap";
+    rankDiv.dataset.blockId = `rank_${entry.rank}`;
+    rankDiv.dataset.blockName = "text";
+    rankDiv.textContent = entry.rank;
   
     const imgDiv = document.createElement('div');
-    imgDiv.className = "relative shrink-0 rounded-avatar h-[2.5rem] w-[2.5rem] flex block-image";
+    imgDiv.className = "relative shrink-0 rounded-avatar shrink-0 h-[2.5rem] w-[2.5rem]";
     imgDiv.dataset.blockId = `image_${entry.rank}`;
     imgDiv.dataset.blockName = "image";
   
@@ -30,24 +31,29 @@
     
     imgDiv.appendChild(img);
   
-    const nameSpan = document.createElement('span');
-    nameSpan.className = "text-md truncate flex-1 leaderboard-name";
-    nameSpan.dataset.blockId = `name_${entry.rank}`;
-    nameSpan.dataset.blockName = "text";
-    nameSpan.textContent = entry.name;
+    const nameDiv = document.createElement('div');
+    nameDiv.className = "flex-1 text-content truncate";
+    nameDiv.dataset.blockId = `name_${entry.rank}`;
+    nameDiv.dataset.blockName = "text";
+    nameDiv.textContent = entry.name;
   
-    const scoreSpan = document.createElement('span');
-    scoreSpan.className = "text-end text-md block-text";
-    scoreSpan.dataset.blockId = `score_${entry.rank}`;
-    scoreSpan.dataset.blockName = "text";
-    scoreSpan.textContent = entry.score;
+    const scoreDiv = document.createElement('div');
+    scoreDiv.className = "px-1 text-content-subdued";
+    scoreDiv.dataset.blockId = `score_${entry.rank}`;
+    scoreDiv.dataset.blockName = "text";
+    scoreDiv.textContent = entry.score;
   
-    div.appendChild(rankSpan);
-    div.appendChild(imgDiv);
-    div.appendChild(nameSpan);
-    div.appendChild(scoreSpan);
+    a.appendChild(rankDiv);
+    a.appendChild(imgDiv);
+    a.appendChild(nameDiv);
+    a.appendChild(scoreDiv);
+
+    // divWrapper.appendChild(rankDiv);
+    // divWrapper.appendChild(imgDiv);
+    // divWrapper.appendChild(nameDiv);
+    // divWrapper.appendChild(scoreDiv);
   
-    a.appendChild(div);
+    // a.appendChild(divWrapper);
   
     return a;
   }
