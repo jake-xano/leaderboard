@@ -48,36 +48,15 @@
     a.appendChild(nameDiv);
     a.appendChild(scoreDiv);
 
-    // divWrapper.appendChild(rankDiv);
-    // divWrapper.appendChild(imgDiv);
-    // divWrapper.appendChild(nameDiv);
-    // divWrapper.appendChild(scoreDiv);
-  
-    // a.appendChild(divWrapper);
-  
     return a;
   }
   
-//   const leaderboardContent = document.getElementById('leaderboard-content');
-  
-//   leaderboardData.forEach(entry => {
-//     const leaderboardEntry = createLeaderboardEntry(entry);
-//     leaderboardContent.appendChild(leaderboardEntry);
-//   });
-
-//// v1 ////
 
 function displayScores(leaderboardData) {
   const leaderboardContent = document.getElementById("leaderboard-content");
   leaderboardContent.innerHTML = ""; // Clear existing scores
 
-//   v1
-//   scores.forEach((score) => {
-//     const li = document.createElement("li");
-//     li.textContent = `Player: ${score.name} - Score: ${score.score}`;
-//     scoresList.appendChild(li);
-//   });
-//   v2
+
 leaderboardData.forEach((entry) => {
     const leaderboardEntry = createLeaderboardEntry(entry);
     leaderboardContent.appendChild(leaderboardEntry);
