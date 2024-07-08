@@ -62,7 +62,7 @@ leaderboardData.forEach((entry) => {
 }
 
 function fetchAndDisplayScores() {
-  const hiddenElement = document.getElementById("leaderboardData");
+  const hiddenElement = document.getElementById("leaderboardProfileData");
   if (hiddenElement) {
     const leaderboardData = JSON.parse(hiddenElement.textContent);
     displayScores(leaderboardData);
