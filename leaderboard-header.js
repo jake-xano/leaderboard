@@ -24,8 +24,13 @@ async function fetchScores(currentPath) {
 
             const data = await response.json();
 
-            // Optionally display or use data here
-            displayScores(data);
+            // Store data in a hidden element
+            const hiddenElement = document.createElement('div');
+            hiddenElement.id = 'leaderboardData';
+            hiddenElement.style.display = 'none';
+            hiddenElement.textContent = JSON.stringify(data);
+            document.body.appendChild(hiddenElement);
+
         } catch (error) {
             console.error('Error fetching scores:', error);
         }
