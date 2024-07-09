@@ -1,64 +1,70 @@
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const validPaths = ['/feed', '/testing'];
-        const currentPath = window.location.pathname;
-        const role = __BM_DATA__.authToken.role.type;
+document.addEventListener('DOMContentLoaded', function() {
+    const validPaths = ['/feed', '/testing'];
+    const currentPath = window.location.pathname;
+    const role = __BM_DATA__.authToken.role.type;
 
-        // if (validPaths.some(path => currentPath.startsWith(path)) && role != "guest") {
-        if (validPaths.some(path => currentPath.startsWith(path))) {
-            // fetchScores();
-            checkForLogin();
-        }
-    });
-
-    function checkForLogin() {
-        const checkInterval = 500; // Interval in milliseconds
-        const intervalId = setInterval(() => {
-            console.log("checking for login");
-            const memberType = __BM_DATA__.authToken.role.type;
-            if (memberType && memberType !== 'guest') {
-                clearInterval(intervalId);
-                fetchScores();
-            }
-        }, checkInterval);
+    // if (validPaths.some(path => currentPath.startsWith(path)) && role != "guest") {
+    if (validPaths.some(path => currentPath.startsWith(path))) {
+        // fetchScores();
+        checkForLogin();
     }
+});
+
+function checkForLogin() {
+    const checkInterval = 500; // Interval in milliseconds
+    const intervalId = setInterval(() => {
+        console.log("checking for login");
+        const memberType = __BM_DATA__.authToken.role.type;
+        if (memberType && memberType !== 'guest') {
+            clearInterval(intervalId);
+            fetchScores();
+        } else {
+          const leaderboard_loading = document.getElementById("leaderboard_loading");
+          leaderboard_loading.innerHTML = "Please log into the community.";
+
+          const loading_text_scores = document.getElementById("loading_text_scores");
+          loading_text_scores.innerHTML = '';
+        }
+    }, checkInterval);
+}
+
+async function fetchScores() {
     
-    async function fetchScores() {
-        
-        const member_id = __BM_DATA__.authToken.member.id;
-        
-        const urls = [
-            {
-                url: `https://xvrs-fsxb-w8c7.n7c.xano.io/api:EVuVOmW4/html/profile/leaderboard?member_id=${member_id}`,
-                elementName: "myScoresData"
-            },
-            {
-                url: `https://xvrs-fsxb-w8c7.n7c.xano.io/api:EVuVOmW4/html/leaderboard?member_id=${member_id}`,
-                elementName: "leaderboardData"
+    const member_id = __BM_DATA__.authToken.member.id;
+    
+    const urls = [
+        {
+            url: `https://xvrs-fsxb-w8c7.n7c.xano.io/api:EVuVOmW4/html/profile/leaderboard?member_id=${member_id}`,
+            elementName: "myScoresData"
+        },
+        {
+            url: `https://xvrs-fsxb-w8c7.n7c.xano.io/api:EVuVOmW4/html/leaderboard?member_id=${member_id}`,
+            elementName: "leaderboardData"
+        }
+    ];
+    
+    for (const { url, elementName } of urls) {
+        try {
+            console.log("fetching scores");
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
             }
-        ];
-        
-        for (const { url, elementName } of urls) {
-            try {
-                console.log("fetching scores");
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
 
-                const data = await response.json();
+            const data = await response.json();
 
-                // Store data in a hidden element
-                const hiddenElement = document.createElement('div');
-                hiddenElement.id = elementName;
-                hiddenElement.style.display = 'none';
-                hiddenElement.textContent = JSON.stringify(data);
-                document.body.appendChild(hiddenElement);
-            } catch (error) {
-                console.error('Error fetching scores:', error);
-            }
+            // Store data in a hidden element
+            const hiddenElement = document.createElement('div');
+            hiddenElement.id = elementName;
+            hiddenElement.style.display = 'none';
+            hiddenElement.textContent = JSON.stringify(data);
+            document.body.appendChild(hiddenElement);
+        } catch (error) {
+            console.error('Error fetching scores:', error);
         }
     }
+}
 
 function checkData() {
     let getLeaderboard = document.getElementById("leaderboardData");
@@ -106,8 +112,8 @@ function fetchAndDisplayScores() {
     displayScores(leaderboardData);
   } else {
     console.log("Leaderboard data not yet available. Retrying...");
-    // setTimeout(fetchAndDisplayScores, 1000);
-    setTimeout(checkForLogin, 1000);
+    setTimeout(fetchScores, 1000);
+    setTimeout(fetchAndDisplayScores, 1000);
   }
 }
 
@@ -119,8 +125,8 @@ function fetchAndDisplayMyScores() {
     DisplayMyScores(myScoresData);
   } else {
     console.log("My Scores data not yet available. Retrying...");
-    // setTimeout(fetchAndDisplayMyScores, 1000);
-    setTimeout(checkForLogin, 1000);
+    setTimeout(fetchScores, 1000);
+    setTimeout(fetchAndDisplayMyScores, 1000);
   }
 }
 
