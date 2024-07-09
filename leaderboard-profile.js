@@ -33,7 +33,6 @@ function fetchAndDisplayScores() {
     displayScores(leaderboardData);
   } else {
     console.log("Leaderboard data not yet available. Retrying...");
-    window.location.reload();
     setTimeout(fetchAndDisplayScores, 1000);
   }
 }
