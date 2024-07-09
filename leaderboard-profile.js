@@ -38,7 +38,4 @@ function fetchAndDisplayScores() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  fetchAndDisplayScores();
-});
-
+fetchAndDisplayScores();
