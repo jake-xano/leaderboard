@@ -1,0 +1,197 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const validPaths = ['/feed', '/testing'];
+        const currentPath = window.location.pathname;
+        const role = __BM_DATA__.authToken.role.type;
+
+        // if (validPaths.some(path => currentPath.startsWith(path)) && role != "guest") {
+        if (validPaths.some(path => currentPath.startsWith(path))) {
+            // fetchScores();
+            checkForLogin();
+        }
+    });
+
+    function checkForLogin() {
+        const checkInterval = 500; // Interval in milliseconds
+        const intervalId = setInterval(() => {
+            console.log("checking for login");
+            const memberType = __BM_DATA__.authToken.role.type;
+            if (memberType && memberType !== 'guest') {
+                clearInterval(intervalId);
+                fetchScores();
+            }
+        }, checkInterval);
+    }
+    
+    async function fetchScores() {
+        
+        const member_id = __BM_DATA__.authToken.member.id;
+        
+        const urls = [
+            {
+                url: `https://xvrs-fsxb-w8c7.n7c.xano.io/api:EVuVOmW4/html/profile/leaderboard?member_id=${member_id}`,
+                elementName: "myScoresData"
+            },
+            {
+                url: `https://xvrs-fsxb-w8c7.n7c.xano.io/api:EVuVOmW4/html/leaderboard?member_id=${member_id}`,
+                elementName: "leaderboardData"
+            }
+        ];
+        
+        for (const { url, elementName } of urls) {
+            try {
+                console.log("fetching scores");
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+
+                const data = await response.json();
+
+                // Store data in a hidden element
+                const hiddenElement = document.createElement('div');
+                hiddenElement.id = elementName;
+                hiddenElement.style.display = 'none';
+                hiddenElement.textContent = JSON.stringify(data);
+                document.body.appendChild(hiddenElement);
+            } catch (error) {
+                console.error('Error fetching scores:', error);
+            }
+        }
+    }
+
+function checkData() {
+    let getLeaderboard = document.getElementById("leaderboardData");
+    let getLeaderboardProfile = document.getElementById("myScoresData");
+    const data = __BM_DATA__;
+
+    if(data.authToken.role.type != "guest") {
+      if (!getLeaderboard && !getLeaderboardProfile) {
+        console.log("Data Not Present. Refresh");
+        window.location.reload();
+      }
+    } 
+    else if (data.authToken.role.type == "guest") {
+      const leaderboard_loading = document.getElementById("leaderboard_loading");
+      leaderboard_loading.innerHTML = "Please log into the community.";
+    }
+  }
+  
+
+function displayScores(leaderboardData) {
+  const leaderboardContent = document.getElementById("leaderboard-content");
+  leaderboardContent.innerHTML = ""; // Clear existing scores
+
+leaderboardData.forEach((entry) => {
+    const leaderboardEntry = createLeaderboardEntry(entry);
+    leaderboardContent.appendChild(leaderboardEntry);
+  });
+}
+
+function DisplayMyScores(myScoresData) {
+  const myScoresContent = document.getElementById("leaderboard-profile");
+  myScoresContent.innerHTML = ""; // Clear existing scores
+
+myScoresData.forEach((entry) => {
+    const myScoresEntry = createMyScoresEntry(entry);
+    myScoresContent.appendChild(myScoresEntry);
+  });
+}
+
+
+function fetchAndDisplayScores() {
+  const hiddenElement = document.getElementById("leaderboardData");
+  if (hiddenElement) {
+    const leaderboardData = JSON.parse(hiddenElement.textContent);
+    displayScores(leaderboardData);
+  } else {
+    console.log("Leaderboard data not yet available. Retrying...");
+    // setTimeout(fetchAndDisplayScores, 1000);
+    setTimeout(checkForLogin, 1000);
+  }
+}
+
+
+function fetchAndDisplayMyScores() {
+  const myScoresHiddenElement = document.getElementById("myScoresData");
+  if (myScoresHiddenElement) {
+    const myScoresData = JSON.parse(myScoresHiddenElement.textContent);
+    DisplayMyScores(myScoresData);
+  } else {
+    console.log("My Scores data not yet available. Retrying...");
+    // setTimeout(fetchAndDisplayMyScores, 1000);
+    setTimeout(checkForLogin, 1000);
+  }
+}
+
+
+
+function createLeaderboardEntry(entry) {
+    const a = document.createElement('a');
+    // a.className = "cursor-pointer rounded-base transition duration-200 focus:outline-none focus-visible:ring text-content-subdued hover:text-link-hovered hover:bg-surface-hovered";
+    a.className = "group flex space-s-3 items-center p-2 rounded-base hover:bg-surface-hovered";
+    a.href = `/member/${entry.member_id}`;
+    a.dataset.blockId = `link_${entry.rank}`;
+    a.dataset.blockName = "link";
+  
+    const divWrapper = document.createElement('div');
+    divWrapper.className = "w-full flex flex-row max-w-full sm:max-w-xs self-center space-s-3 sm:space-s-3.5 md:space-s-4 lg:space-s-5 py-2 sm:py-2.5 lg:py-3 px-2 sm:px-2.5 lg:px-3";
+  
+    const rankDiv = document.createElement('div');
+    rankDiv.className = "text-lg font-medium w-5 text-center flex-shrink-0 whitespace-nowrap";
+    rankDiv.dataset.blockId = `rank_${entry.rank}`;
+    rankDiv.dataset.blockName = "text";
+    rankDiv.textContent = entry.rank;
+  
+    const imgDiv = document.createElement('div');
+    imgDiv.className = "relative shrink-0 rounded-avatar shrink-0 h-[2.5rem] w-[2.5rem]";
+    imgDiv.dataset.blockId = `image_${entry.rank}`;
+    imgDiv.dataset.blockName = "image";
+  
+    const imgSrc = entry.profile_pic_id ? `https://tribe-s3-production.imgix.net/${entry.profile_pic_id}?fit=max&amp;w=1000&amp;auto=compress,format` : "https://s3-us-west-2.amazonaws.com/slack-files2/bot_icons/2023-11-10/6191253567169_48.png";
+    const img = document.createElement('img');
+    img.className = "shrink-0 rounded-avatar h-[2.5rem] w-[2.5rem] object-cover object-center";
+    img.src = imgSrc;
+    img.width = 40; // 2.5rem to px
+    img.height = 40;
+    
+    imgDiv.appendChild(img);
+  
+    const nameDiv = document.createElement('div');
+    nameDiv.className = "flex-1 text-content truncate";
+    nameDiv.dataset.blockId = `name_${entry.rank}`;
+    nameDiv.dataset.blockName = "text";
+    nameDiv.textContent = entry.name;
+  
+    const scoreDiv = document.createElement('div');
+    scoreDiv.className = "px-1 text-content-subdued";
+    scoreDiv.dataset.blockId = `score_${entry.rank}`;
+    scoreDiv.dataset.blockName = "text";
+    scoreDiv.textContent = entry.score;
+  
+    a.appendChild(rankDiv);
+    a.appendChild(imgDiv);
+    a.appendChild(nameDiv);
+    a.appendChild(scoreDiv);
+
+    return a;
+}
+
+function createMyScoresEntry(entry) {
+  const scoreWrapper = document.createElement('div');
+  scoreWrapper.className = "group flex space-s-3 items-center p-2 rounded-base";
+
+  const monthName = document.createElement('div');
+  monthName.className = "flex-1 text-content truncate";
+  monthName.textContent = entry.month_text;
+
+  const scoreDiv = document.createElement('div');
+  scoreDiv.className = "px-1 text-content-subdued";
+  scoreDiv.textContent = entry.score;
+
+  scoreWrapper.appendChild(monthName);
+  scoreWrapper.appendChild(scoreDiv);
+
+  return scoreWrapper;
+}
+</script>
