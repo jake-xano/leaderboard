@@ -9,10 +9,19 @@
     
     async function fetchScores() {
         const member_id = __BM_DATA__.authToken.member.id;
-        
+
+        if (currentPath = '/member') {
+            const currentUrl = window.location.href;
+            const urlParts = currentUrl.split('/');
+            let profile_member_id = urlParts[urlParts.length - 1];
+            if(!profile_member_id) {
+                profile_member_id = member_id;
+            }
+        }
+              
         const urls = [
             {
-                url: `https://xvrs-fsxb-w8c7.n7c.xano.io/api:EVuVOmW4/html/profile/leaderboard?member_id=${member_id}`,
+                url: `https://xvrs-fsxb-w8c7.n7c.xano.io/api:EVuVOmW4/html/profile/leaderboard?member_id=${profile_member_id}`,
                 elementName: "leaderboardProfileData"
             },
             {

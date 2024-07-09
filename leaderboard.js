@@ -1,6 +1,4 @@
-
-  
-  function createLeaderboardEntry(entry) {
+function createLeaderboardEntry(entry) {
     const a = document.createElement('a');
     // a.className = "cursor-pointer rounded-base transition duration-200 focus:outline-none focus-visible:ring text-content-subdued hover:text-link-hovered hover:bg-surface-hovered";
     a.className = "group flex space-s-3 items-center p-2 rounded-base hover:bg-surface-hovered";
@@ -49,13 +47,11 @@
     a.appendChild(scoreDiv);
 
     return a;
-  }
-  
+}
 
 function displayScores(leaderboardData) {
   const leaderboardContent = document.getElementById("leaderboard-content");
   leaderboardContent.innerHTML = ""; // Clear existing scores
-
 
 leaderboardData.forEach((entry) => {
     const leaderboardEntry = createLeaderboardEntry(entry);
@@ -74,4 +70,6 @@ function fetchAndDisplayScores() {
   }
 }
 
-fetchAndDisplayScores();
+document.addEventListener('DOMContentLoaded', function() {
+  fetchAndDisplayScores();
+});
